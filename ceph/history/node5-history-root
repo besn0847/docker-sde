@@ -1,0 +1,5 @@
+    1  pgrep -fl ceph
+    2  exit
+    3  history 
+    4  exit
+    5  history > /tmp/node5-history-root

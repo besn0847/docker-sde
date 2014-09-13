@@ -1,0 +1,87 @@
+    1  ls
+    2  cat bootstrap.sh 
+    3  vi ceph.conf 
+    4  cat bootstrap.sh 
+    5  scp init-mon.sh ceph@ceph-node1:/home/ceph
+    6  scp ceph.conf ceph@ceph-node1:/home/ceph
+    7  ssh ceph@ceph-node1
+    8  scp ceph.conf ceph@ceph-node2:/home/ceph
+    9  scp init-mon.sh ceph@ceph-node2:/home/ceph
+   10  ssh ceph@ceph-node2
+   11  cat bootstrap.sh 
+   12  scp ceph@ceph-node1:/home/ceph/ceph.client.admin.keyring .
+   13  scp ceph@ceph-node1:/etc/ceph/ceph.client.admin.keyring .
+   14  ssh ceph@ceph-node1
+   15  scp ceph@ceph-node1:/home/ceph/ceph.client.admin.keyring .
+   16  cat bootstrap.sh 
+   17  sudo scp ceph.client.admin.keyring ceph@ceph-node2:/home/ceph/
+   18  ssh ceph@ceph-node2
+   19  ssh ceph@ceph-node1
+   20  ssh ceph@ceph-node2
+   21  ssh ceph@ceph-node1
+   22  ssh ceph@ceph-node2
+   23  exit
+   24  cat bootstrap.sh 
+   25  scp ceph.conf ceph@ceph-node3:/home/ceph
+   26  scp ceph.conf ceph@ceph-node4:/home/ceph
+   27  scp init-osd.sh ceph@ceph-node3:/home/ceph
+   28  scp init-osd.sh ceph@ceph-node4:/home/ceph
+   29  ssh ceph-node3
+   30  cat bootstrap.sh 
+   31  scp ceph.client.admin.keyring ceph@ceph-node3:/home/ceph/
+   32  scp ceph.client.admin.keyring ceph@ceph-node4:/home/ceph/
+   33  ssh ceph-node3
+   34  ssh ceph-node4
+   35  scp ceph.client.admin.keyring ceph@ceph-node5:/home/ceph/
+   36  scp ceph.client.admin.keyring ceph@ceph-node6:/home/ceph/
+   37  cat init-mds.sh 
+   38  scp init-mds.sh ceph@ceph-node6:/home/ceph/
+   39  scp init-mds.sh ceph@ceph-node5:/home/ceph/
+   40  ssh ceph-node5
+   41  scp ceph.conf ceph@ceph-node5:/home/ceph/
+   42  scp ceph.conf ceph@ceph-node6:/home/ceph/
+   43  ssh ceph-node5
+   44  ssh ceph-node6
+   45  ssh ceph-node6 'sudo pkill ceph-mds'
+   46  ssh ceph-node4 'sudo pkill ceph-ods'
+   47  ssh ceph-node2 'sudo pkill ceph-mon'
+   48  ssh ceph-node2 'sudo ceph -s'
+   49  ssh ceph-node5 'sudo pkill ceph-mds'
+   50  ssh ceph-node3 'sudo pkill ceph-ods'
+   51  ssh ceph-node1 'sudo pkill ceph-ods'
+   52  ssh ceph-node1 'sudo pkill ceph-mon'
+   53  ssh ceph-node1 'pgrep -fl ceph'
+   54  ssh ceph-node1 'history |  ceph-mon'
+   55  ssh ceph-node1 'history |  grep ceph-mon'
+   56  ssh ceph-node1 
+   57  ssh ceph-node3
+   58  ssh ceph-node1 'sudo ceph -s'
+   59  ssh ceph-node1
+   60  ssh ceph-node1 'date 05252024' && ssh ceph-node2 'date 05252024' 
+   61  ssh ceph-node1 'date 05252024'; ssh ceph-node2 'date 05252024' 
+   62  ssh ceph-node1
+   63  ssh ceph-node1 'date'; ssh ceph-node2 'date'; 
+   64  ssh ceph-node1
+   65  ssh ceph-node1 'date'; ssh ceph-node2 'date'; 
+   66  ssh ceph-node1
+   67  ssh ceph-node4
+   68  ssh ceph-node3
+   69  ssh ceph-node6
+   70  ssh ceph-node5
+   71  ssh ceph-node2
+   72  ssh ceph-node1
+   73  ssh ceph-node2 'sudo ceph-mon -i ceph-node2'
+   74  ssh ceph-node2 'pgrep -fl ceph'
+   75  ssh ceph-node3 'sudo ceph-osd -i 1
+   76  ssh ceph-node3 'sudo ceph-osd -i 1'
+   77  ssh ceph-node3 'sudo ceph-osd -i 0'
+   78  ssh ceph-node4'sudo ceph-osd -i 1'
+   79  ssh ceph-node4 'sudo ceph-osd -i 1'
+   80  ssh ceph-node1
+   81  ssh ceph-node5
+   82  ssh ceph-node6 'ceph-mds -i 1'
+   83  sudo ceph -w
+   84  ssh ceph-node1
+   85  exit
+   86  history 
+   87  history > /tmp/deploy-history-ceph

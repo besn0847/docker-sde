@@ -1,0 +1,29 @@
+    1  ls
+    2  vi ceph.conf 
+    3  cat init-osd.sh 
+    4  sudo ./init-osd.sh 0 ceph-node3
+    5  ls -ltr /var/lib/ceph/osd/
+    6  vi init-osd.sh 
+    7  ls -ltr /var/lib/ceph/osd/ceph-storage/
+    8  ln -s  /var/lib/ceph/osd/ceph-storage/  /var/lib/ceph/osd/ceph-0/
+    9  sudo ln -s  /var/lib/ceph/osd/ceph-storage/  /var/lib/ceph/osd/ceph-0/
+   10  sudo ln -s  /var/lib/ceph/osd/ceph-storage /var/lib/ceph/osd/ceph-0
+   11  sudo ./init-osd.sh 0 ceph-node3
+   12  exit
+   13  cat init-osd.sh 
+   14  sudo ./init-osd.sh 0 ceph-node3
+   15  sudo ceph -s
+   16  exit
+   17  history | grep ceph
+   18  sudo su -
+   19  exit
+   20  ceph-osd -i 0
+   21  pgrep -fl ceph
+   22  kill 564
+   23  sudo kill 564
+   24  sudo ceph-osd -i 0
+   25  pgrep -fl ceph
+   26  ls -ltr /var/log/ceph
+   27  tail /var/log/ceph/ceph-osd.0.log 
+   28  exit
+   29  history > /tmp/node3-history-ceph

@@ -1,0 +1,24 @@
+10.10.0.10	ceph-deploy deploy
+
+# Ceph mon-0
+10.10.0.11	ceph-node1 mon-0
+# Ceph mon-1
+10.10.0.12	ceph-node2 mon-1
+# Ceph osd-0
+10.10.0.13	ceph-node3 osd-0
+# Ceph osd-1
+10.10.0.14	ceph-node4 osd-1
+# Ceph msd-0
+10.10.0.15	ceph-node5 mds-0
+# Ceph msd-1
+10.10.0.16	ceph-node6 mds-1
+# Ceph mon-2
+10.10.0.18	ceph-node8 mon-2
+
+127.0.0.1	localhost
+::1		localhost ip6-localhost ip6-loopback
+fe00::0		ip6-localnet
+ff00::0		ip6-mcastprefix
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+

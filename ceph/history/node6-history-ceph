@@ -1,0 +1,43 @@
+    1  sudo ./init-mds.sh 1 ceph-node6
+    2  sudo ceph -s
+    3  exit
+    4  sudo mkdir /var/lib/ceph/mon/ceph-2
+    5  ceph auth get mon. -o /tmp/keyring
+    6  sudo ceph auth get mon. -o /tmp/keyring
+    7  ceph auth get mon. -o /tmp/monmap
+    8  sudo ceph auth get mon. -o /tmp/monmap
+    9  sudo ceph-mon -i 2 --mkfs --monmap /tmp/monmap --keyring /tmp/keyring 
+   10  sudo ceph -s
+   11  sudo ceph-mon -i 2 --mkfs --monmap /tmp/monmap --keyring /tmp/keyring 
+   12  ceph auth get mon. -o /tmp/monmap
+   13  ls /tmp
+   14  rm /tmp/*
+   15  sudo rm /tmp/*
+   16  sudo ceph auth get mon. -o /tmp/keyring
+   17  sudo ceph mon getmap -o /tmp/monmap
+   18  sudo ceph-mon -i 2 --mkfs --monmap /tmp/monmap --keyring /tmp/keyring 
+   19  sudo ceph mon add 2 10.10.0.16:6789
+   20  sudo ceph-mon -i 2 --public-addr 10.10.0.16:6789
+   21  pgrep -fl ceph
+   22  history | grep mds
+   23  sudo su -
+   24  sudo ceph-mds -i 1
+   25  pgrep -fl ceph
+   26  sudo ceph -s
+   27  pgrep -fl mds
+   28  kill 12136
+   29  sudo kill 12136
+   30  pgrep -fl mds
+   31  sudo ceph -s
+   32  sudo ceph-mds -i 1
+   33  exit
+   34  pgrep -fl mds
+   35  sudo kill 12268
+   36  pgrep -fl mds
+   37  exit
+   38  sudo ceph-mds -i 1
+   39  sudo ceph -s
+   40  exit
+   41  sudo kill 12093
+   42  exit
+   43  history > /tmp/node6-history-ceph

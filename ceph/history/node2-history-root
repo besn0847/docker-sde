@@ -1,0 +1,16 @@
+    1  ceph-mon -i ceph-node2
+    2  pgrep -fl ceph
+    3  tail -f /var/log/ceph/ceph-mon.ceph-node2.log 
+    4  tail -f /var/log/ceph/ceph.log 
+    5  ceph -s
+    6  date 
+    7  date --h
+    8  date 05252023
+    9  exit
+   10  ceph -s
+   11  pgrep -fl ceph
+   12  kill 22721
+   13  date
+   14  ssh ceph-node5
+   15  exit
+   16  history > /tmp/node2-history-root

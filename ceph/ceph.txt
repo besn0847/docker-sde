@@ -1,0 +1,58 @@
+Installation de Docker / OVS / CEPH
+
+Objectifs :
+   . Etude d'un stack IaaS à base de Docker
+   . Fonction de continuité multi-site
+
+Principes :
+   1) Création d'un stack IaaS en multi-hôtes avec Docker (SDC), OVS (SDN) et Ceph (SDS) 
+   2) Utilisation de CRIU pour fournir le plan de reprise d'activité
+  
+Containers utilisés : ceph-deploy (10.10.0.1), ceph-node1 (10.10.0.11), ceph-node2 (10.10.0.12), ceph-node3 (10.10.0.13),
+
+- Sur le hôte, installation du stack IaaS (SDC + SDN) :
+	. Déploiement de Docker (0.10.0 - packages : lxc-docker)
+	. Déploiement de Open vSwitch (1.4.6 - packages : openvswitch-common, openvswitch-switch, openvswitch-datapath-dkms)
+	. Déploiement de CGroup (1.1.5 - packages : cgroup-lite)
+	. Installation du script ovsplumb.sh
+	. (Option) Déploiement de l'agent Shipyard pour gestion centralisée
+
+- Sur le hôte, configuration des éléments :
+	. Création d'un bridge pour le VLAN du SDS (VLAN : 10 - bridge : BR10 - ip : 10.10.0.0/24)
+	. Modification du hosts qui sera utilisé pour le VLAN 10 notamment
+
+- Utililisation de l'image ubuntu:14:04 -> installation (docker run -t -i --name="ceph-base" ubuntu:14.04 /bin/bash)
+	. Installation du serveur OpenSSH :
+		apt-get install -y openssh-server
+	. Installation de supervisor
+		apt-get install -y supervisor
+	. Cleaning des packages
+		apt-get clean	
+
+- Configuration serveurs SSH, Supervisor, utilisateurs CEPH ...
+	. Serveur SSH :
+		mkdir -p /var/run/sshd
+		sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+		echo "    StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+		sed -i -e 's/^session    required     pam_loginuid.so$/session    optional     pam_loginuid.so/g' /etc/pam.d/sshd
+		echo 'root:passw0rd' | chpasswd
+		useradd -d /home/ceph -m ceph
+		echo 'ceph:passw0rd' | chpasswd
+		echo "ceph ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ceph
+		chmod 0440 /etc/sudoers.d/ceph
+	. Serveur SUPERVISORD :
+		sed -i -e 's/\[supervisord\]/\[supervisord\]\nnodaemon=true/g' /etc/supervisor/supervisord.conf
+		echo "[program:sshd]" > /etc/supervisor/conf.d/sshd.conf
+		echo "command=/usr/sbin/sshd -D" >> /etc/supervisor/conf.d/sshd.conf
+
+- Configuration du noeud CEPH-DEPLOY
+	. Génération des certificats
+		/usr/bin/ssh-keygen -N "" -f /root/.ssh/id_rsa
+
+- Récupération de la clé du CEPH-DEPLOY
+	
+
+
+
+
+

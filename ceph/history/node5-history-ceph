@@ -1,0 +1,18 @@
+    1  ls
+    2  exit
+    3  sudo ./init-mds.sh 0 ceph-node5
+    4  pgrep -fl ceph
+    5  exit
+    6  history 
+    7  sudo su -
+    8  sudo ceph-mds -i 0
+    9  exit
+   10  history | grep mds
+   11  exit
+   12  sudo kill 24
+   13  history 
+   14  sudo ceph -s
+   15  sudo ceph-mds -i 0
+   16  sudo ceph -s
+   17  exit
+   18  history > /tmp/node5-history-ceph

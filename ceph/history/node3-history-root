@@ -1,0 +1,4 @@
+    1  history 
+    2  ceph-osd -i 0
+    3  exit
+    4  history > /tmp/node3-history-root

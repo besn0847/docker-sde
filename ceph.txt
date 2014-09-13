@@ -1,0 +1,145 @@
+Installation de Docker / OVS / CEPH
+
+Objectifs :
+   . Etude d'un stack IaaS à base de Docker
+   . Fonction de continuité multi-site
+
+Principes :
+   1) Création d'un stack IaaS en multi-hôtes avec Docker (SDC), OVS (SDN) et Ceph (SDS) 
+   2) Utilisation de CRIU pour fournir le plan de reprise d'activité
+  
+Containers utilisés : ceph-deploy (10.10.0.1), ceph-node1 (10.10.0.11), ceph-node2 (10.10.0.12), ceph-node3 (10.10.0.13),
+
+- Sur le hôte, installation du stack IaaS (SDC + SDN) :
+	. Déploiement de Docker (0.10.0 - packages : lxc-docker)
+	. Déploiement de Open vSwitch (1.4.6 - packages : openvswitch-common, openvswitch-switch, openvswitch-datapath-dkms)
+	. Déploiement de CGroup (1.1.5 - packages : cgroup-lite)
+	. Installation du script ovsplumb.sh
+	. (Option) Déploiement de l'agent Shipyard pour gestion centralisée
+
+- Sur le hôte, configuration des éléments :
+	. Création d'un bridge pour le VLAN du SDS (VLAN : 10 - bridge : BR10 - ip : 10.10.0.0/24)
+	. Modification du hosts qui sera utilisé pour le VLAN 10 notamment
+
+- Utililisation de l'image ubuntu:14:04 -> installation (docker run -t -i --name="ceph-base" ubuntu:14.04 /bin/bash)
+	. Installation du serveur OpenSSH :
+		apt-get install -y openssh-server
+	. Installation de supervisor
+		apt-get install -y supervisor
+	. Cleaning des packages
+		apt-get clean	
+
+- Configuration serveurs SSH, Supervisor, utilisateurs CEPH ...
+	. Serveur SSH :
+		mkdir -p /var/run/sshd
+		sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+		echo "    StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+		sed -i -e 's/^session    required     pam_loginuid.so$/session    optional     pam_loginuid.so/g' /etc/pam.d/sshd
+		echo 'root:passw0rd' | chpasswd
+		useradd -d /home/ceph -m ceph
+		echo 'ceph:passw0rd' | chpasswd
+		echo "ceph ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ceph
+		chmod 0440 /etc/sudoers.d/ceph
+	. Serveur SUPERVISORD :
+		sed -i -e 's/\[supervisord\]/\[supervisord\]\nnodaemon=true/g' /etc/supervisor/supervisord.conf
+		echo "[program:sshd]" > /etc/supervisor/conf.d/sshd.conf
+		echo "command=/usr/sbin/sshd -D" >> /etc/supervisor/conf.d/sshd.conf
+
+- Configuration du noeud CEPH-DEPLOY
+	. Génération des certificats
+		/usr/bin/ssh-keygen -N "" -f /root/.ssh/id_rsa
+
+- Récupération de la clé du CEPH-DEPLOY
+
+
+- Création du CEPH-MON (as root)
+	vi /etc/ceph/ceph.conf
+		[global]
+		fsid = a7f64266-0894-4f1e-a635-d0aeaca0e993
+		mon_initial_members = ceph-node1
+		mon_host = 10.10.0.11
+		public_network = 10.10.0.0/24
+		auth_cluster_required = cephx
+		auth_service_required = cephx
+		auth_client_required = cephx
+		osd_journal_size = 1024
+		filestore_xattr_use_omap = true
+		osd_pool_default_size = 2
+		osd_pool_default_min_size = 1
+		osd_pool_default_pg_num = 333
+		osd_pool_default_pgp_num = 333
+		osd_crush_chooseleaf_type = 1
+	ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *'
+	ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
+	ceph-authtool /tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring
+	monmaptool --create --add ceph-node1 10.10.0.11 --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+	mkdir /var/lib/ceph/mon/ceph-ceph-node1
+	ceph-mon --mkfs -i ceph-node1 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+	ceph-mon -i ceph-node1
+
+- Création de CEPH-OSD (as root)
+	scp root@ceph-node1:/etc/ceph/ceph* /etc/ceph/
+	ceph osd create
+	ceph-osd -i 0 --mkfs --mkkey
+	ceph auth add osd.0 osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/ceph-0/keyring
+	ceph osd crush add-bucket ceph-node2 host
+	ceph osd crush move ceph-node2 root=default
+	ceph osd crush add osd.0 1.0 host=ceph-node2
+	ceph-osd -i 0
+
+- Ajout d'une interface Docker sur le réseau CEPH
+	ip link add name veth0 type veth peer name veth1
+	ip link set veth0 up
+	ovs-vsctl add-port br10 veth0 tag=10
+	ip addr add 10.10.0.254 broadcast 10.10.0.255 dev veth1
+	ip link set veth1 up
+	route add -net 10.10.0.0/24 dev veth1
+
+- Ajout d'un MDS
+	apt-get install ceph-mds
+	vi /etc/ceph/ceph.conf		
+		[mds]
+		  mds data = /var/lib/ceph/mds/mds.0
+		  keyring = /var/lib/ceph/mds/mds.0/mds.0.keyring
+		[mds.0]
+		  host = ceph-node1 
+	mkdir /var/lib/ceph/mds/mds.0
+	ceph auth get-or-create mds.0 mds 'allow ' osd 'allow *' mon 'allow rwx' > /var/lib/ceph/mds/mds.0/mds.0.keyring
+	ceph-mds -i 0
+
+- Configuration de CEPH FS sur le host Docker
+	sudo apt-get install ceph-fs-common
+	sudo mount -t ceph 10.10.0.11:6789:/ ../Volumes/ceph/mnt/ceph-ds/ -o name=admin,secret=AQDECWpTEMaVAhAAMdEbb6hF3ZgB+H98fJD22A==
+
+
+- Remote connection to Docker host
+   . Host 1
+      sudo /usr/bin/ovs-vsctl add-br br0
+      sudo /usr/bin/ovs-vsctl add-br br2
+      sudo /usr/bin/ovs-vsctl add-port br0 tep0 -- set interface tep0 type=internal
+      sudo /sbin/ifconfig tep0 192.168.200.1 netmask 255.255.255.0
+      sudo /usr/bin/ovs-vsctl add-port br2 gre0 -- set interface gre0 type=gre options:remote_ip=192.168.100.2
+      sudo ./plumb.sh br2 ubuntu 10.10.0.11/24 10.10.0.255 10
+      sudo ip link add name veth0 type veth peer name veth1
+      sudo ip link set veth0 up
+      sudo ovs-vsctl add-port br2 veth0 tag=10
+      sudo ip addr add 10.10.0.1 broadcast 10.10.0.255 dev veth1
+      sudo ip link set veth1 up
+      sudo route add -net 10.10.0.0/24 dev veth1
+
+ - Second monitor set-up
+ 	sudo ceph auth get mon. -o /tmp/ceph.mon.keyring
+	sudo ceph mon getmap -o /tmp/monmap
+	sudo ceph-mon -i ceph-node2 --mkfs --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring 	
+	sudo ceph mon add ceph-node2 10.10.0.12:6789
+	sudo ceph-mon -i ceph-node2 --public-addr 10.10.0.12:6789
+	
+
+
+
+
+
+
+
+
+

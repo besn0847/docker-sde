@@ -1,0 +1,53 @@
+    1  pgrep -fl super
+    2  pgrep -fl ceph
+    3  ls -ltr /var/log/ceph/
+    4  cat /var/log/ceph/ceph.log 
+    5  date
+    6  tail /var/log/ceph/ceph.log 
+    7  rm /var/log/ceph/*
+    8  pgrep -fl ceph-mon
+    9  ceph-mon -i ceph-node1
+   10  tail /var/log/ceph/ceph.log 
+   11  tail -f /var/log/ceph/ceph.log 
+   12  tail /var/log/ceph/ceph.log 
+   13  date
+   14  pgrep -fl ceph-mon
+   15  ceph -s
+   16  pgrep -fl ceph-mon
+   17  ps -auxxxwww
+   18  ls -ltr /var/log/ceph
+   19  tail /var/log/ceph/ceph.log 
+   20  tail /var/log/ceph/ceph-mon.ceph-node1.log 
+   21  vi /etc/ceph/ceph.c
+   22  vi /etc/ceph/ceph.conf 
+   23  ceph -s
+   24  ls -ltr /var/log/ceph
+   25  ceph -s
+   26  ls -ltr /var/log/ceph
+   27  ceph --help
+   28  ceph -s -c /etc/ceph/ceph.conf 
+   29  ceph -s -c /etc/ceph/ceph.conf --verbose
+   30  ls -ltr /var/log/ceph
+   31  tail /var/log/ceph/ceph-mon.ceph-node1.log 
+   32  tail -f /var/log/ceph/ceph-mon.ceph-node1.log 
+   33  ls -ltr /var/log/ceph
+   34  tail -f /var/log/ceph/ceph-mon.ceph-node1.log 
+   35  ssh ceph-node2
+   36  exit
+   37  tail -f /var/log/ceph/ceph-mon.ceph-node1.log 
+   38  tail -f /var/log/ceph/ceph.log 
+   39  exit
+   40  date 05252024
+   41  exit
+   42  pkill ceph-mon
+   43  history 
+   44  ceph-mon -i ceph-node1
+   45  ceph -s
+   46  date
+   47  exit
+   48  ceph -s
+   49  exit
+   50  history 
+   51  ceph-mon -i ceph-node1
+   52  exit
+   53  history > /tmp/node1-history-root

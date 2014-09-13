@@ -1,0 +1,104 @@
+    1  ls
+    2  cat init-mon.sh 
+    3  sudo cp /home/ceph/ceph.conf /etc/ceph/ceph.conf
+    4  sudo ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *'
+    5  sudo ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
+    6  sudo ceph-authtool /tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring
+    7  sudo monmaptool --create --add ceph-node1 10.10.0.11 --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+    8  monmaptool 
+    9  monmaptool --add 10.10.0.12  --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+   10  monmaptool --add a 10.10.0.11:6789 --add b 10.10.0.12:6789 /tmp/monmap
+   11  monmaptool --add 10.10.0.12:6789 /tmp/monmap
+   12  rm /tmp/monmap 
+   13  sudo rm /tmp/monmap 
+   14  sudo monmaptool --create --add ceph-node1 10.10.0.11 --add ceph-node2 10.10.0.12 --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+   15  cat init-mon.sh 
+   16  sudo mkdir /var/lib/ceph/mon/ceph-ceph-node1
+   17  sudo ceph-mon --mkfs -i ceph-node1 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+   18  sudo ceph-mon -i ceph-node1
+   19  pgrep -fl ceph
+   20  sudo ceph -s
+   21  sudo ceph -w
+   22  exit
+   23  cat init-mon.sh 
+   24  sudo cp /etc/ceph/ceph.client.admin.keyring /home/ceph     
+   25  sudo chown ceph.ceph /home/ceph/ceph.client.admin.keyring
+   26  exit
+   27  pgrep -fl cep
+   28  kill 109
+   29  sudo kill 109
+   30  cat init-mon.sh 
+   31  sudo rm  -rf /var/lib/ceph/mon/ceph-ceph-node1
+   32  sudo vi /etc/ceph/ceph.c
+   33  sudo vi /etc/ceph/ceph.conf 
+   34  monmaptool --create --add ceph-node1 10.10.0.11 --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+   35  sudo monmaptool --create --add ceph-node1 10.10.0.11 --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+   36  sudo monmaptool --create --clobber --add ceph-node1 10.10.0.11 --fsid a7f64266-0894-4f1e-a635-d0aeaca0e993 /tmp/monmap
+   37  sudo mkdir /var/lib/ceph/mon/ceph-ceph-node1
+   38  sudo ceph-mon --mkfs -i ceph-node1 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+   39  sudo ceph-mon -i ceph-node1
+   40  sudo ceph -s
+   41  exit
+   42  sudo ceph mon add ceph-node2 10.10.0.12:6789
+   43  pgrep -fl ceph
+   44  sudo ceph mon add ceph-node2 10.10.0.12:6789
+   45  exit
+   46  history | grep ceph
+   47  sudo ceph-mon -i ceph-node1
+   48  exit
+   49  sudo ceph -w
+   50  sudo ceph -s
+   51  pgrep -fl ceph
+   52  ps _auxxxww | grep ceph
+   53  ps -auxxxww | grep ceph
+   54  kill 22886 22887 22888
+   55  sudo kill 22886 22887 22888
+   56  ps -auxxxww | grep ceph
+   57  ceph -s
+   58  sudo ceph -s
+   59  sudo ceph -w
+   60  pgrep -fl ceph
+   61  kill 22816
+   62  sudo kill 22816
+   63  sudo su -
+   64  exit
+   65  sudo ceph -s
+   66  ssh ceph-node2
+   67  ssh ceph-node3
+   68  exit
+   69  ssh ceph-node3 'pkill ceph-ods'
+   70  sudo su -
+   71  exit
+   72  sudo su -
+   73  exit
+   74  pgrep -fl ceph
+   75  kill 24206
+   76  sudo kill 24206
+   77  sudo su -
+   78  sudo ceph -s
+   79  exit
+   80  sudo ceph -s
+   81  sudo ceph -w
+   82  ssh ceph-node6
+   83  ssh ceph-node5
+   84  ssh ceph-node6
+   85  ssh ceph-node1
+   86  pgrep -fl ceph
+   87  sudo kill 25
+   88  sudo ceph -s
+   89  sudo cp /etc/ceph/ceph.conf /tmp
+   90  vi /tmp/ceph.conf 
+   91  sudo vi /tmp/ceph.conf 
+   92  ceph --h
+   93  sudo ceph -s -c /tmp/ceph.
+   94  sudo ceph -s -c /tmp/ceph.conf 
+   95  exit
+   96  sudo ceph -s -c /tmp/ceph.conf 
+   97  sudo ceph -w -c /tmp/ceph.conf 
+   98  history | grep ceph
+   99  history | grep ceph-mon
+  100  sudo ceph-mon -i ceph-node1
+  101  sudo ceph -w -c /tmp/ceph.conf 
+  102  sudo ceph -s -c /tmp/ceph.conf 
+  103  exit
+  104  history > /tmp/node1-history-ceph
